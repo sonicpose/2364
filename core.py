@@ -1,9 +1,4 @@
 import os
-
-def main():
-	print "hi"
-
-	return
 	
 def write(x, y):
 	w = open(x, 'w')
@@ -31,6 +26,12 @@ def read(y):
 	r.close()
 
 	return z
+
+def split(x):
+	lines = x.split('\n')
+
+	return lines
+
 
 #	os.system("echo {} | espeak".format(x))
 
