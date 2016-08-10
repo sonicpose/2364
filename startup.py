@@ -19,6 +19,7 @@ def main():
 	download(data, videos)
 
 	clear()
+
 def create():
 	global i
 	location = 'Placeholder'
@@ -28,9 +29,10 @@ def create():
 		if len(idct) > 0:
 			dct = idct
 		location = input("srh> ")
-		i = i + 1
-		data ="{}\n{}".format(dct, location)
-		core.log('info', data)
+		if len(location) > 0:
+			i = i + 1
+			data ="{}\n{}".format(dct, location)
+			core.log('info', data)
 
 	data = core.read('info')
 	
@@ -47,7 +49,7 @@ def search(data):
 		query_string = urllib.parse.urlencode({"search_query" : location})
 		html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
 		search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
-		core.log('videos', "http://www.youtube.com/watch?v=" + search_results[0])
+		core.log('videos',("http://www.youtube.com/watch?v=" + search_results[0]))
 		ii = ii + 2
 		il = il - 1
 
