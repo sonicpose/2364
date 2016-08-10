@@ -55,7 +55,7 @@ def download():
 	iiii = len(linesc)
 	i = len(linesb)
 	ii = 1
-	iii = 1
+	iii = 0
 	while i > 0:
 		download = linesb[ii]
 		dct = linesc[iii]
