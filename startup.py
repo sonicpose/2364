@@ -5,73 +5,77 @@ import urllib.parse
 import re
 import sys
 
-#dct = None
+i = 0
 
 def main():
-	#global dct
-	idct = input("dir> ")
+	data = create()
+	core.log('log', data)
+	data = core.split(data)
 
-	dct = idct
-	create(dct)
+	videos = search(data)
+	core.log('log', videos)
+	videos = core.split(videos)
 
-def create(dct):
-	location = input("srh> ")
+	download(data, videos)
 
-	data = "{}\n{}".format(dct, location)
+	clear()
+def create():
+	global i
+	location = 'Placeholder'
 
-	core.log('info', data)
+	while len(location) > 0:
+		idct = input("dir>")
+		if len(idct) > 0:
+			dct = idct
+		location = input("srh> ")
+		i = i + 1
+		data ="{}\n{}".format(dct, location)
+		core.log('info', data)
 
-	if len(location) < 1:
-		search()
+	data = core.read('info')
+	
+	return data
 
-	create(dct)
 
-def search():
-	linesa = core.split(core.read('info'))
-	i = len(linesa)
+
+def search(data):
+	global i
+	il = i
 	ii = 1
-	while i > 1:
-		location = linesa[ii]
-		i = i - 2
-		ii = ii + 2
-
+	while il > 0:
+		location = data[ii]
 		query_string = urllib.parse.urlencode({"search_query" : location})
 		html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
 		search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
 		core.log('videos', "http://www.youtube.com/watch?v=" + search_results[0])
+		ii = ii + 2
+		il = il - 1
 
-	log('videos', 'log')
+	videos = core.read('videos')
 
-	download()
+	return videos
 
-	core.write('videos', '')
-	core.write('info', '')
+def download(data, videos):
+	global i
+	string = 'cd {}' + '\n' + 'youtube-dl {}'
+	il = i
+	di = 0
+	vi = 1
 
-	sys.exit()
-
-def download():
-	linesb = core.split(core.read('videos'))
-	linesc = core.split(core.read('info'))
-	iiii = len(linesc)
-	i = len(linesb)
-	ii = 1
-	iii = 0
-	while i > 0:
-		download = linesb[ii]
-		dct = linesc[iii]
-		i = i - 1
-		ii = ii + 1
-		iii = iii + 2
-
-		os.system("cd {}".format(dct))
-		os.system("youtube-dl {}".format(download))
-
-
+	while il > 0:
+		dct = data[di]
+		download = videos[vi]
+		os.system(string.format(dct, download))
+		il = il - 1
+		di = di + 2
+		vi = vi + 1
 
 def log(filefrom, fileto):
 	x = core.read(filefrom)
 	core.log(fileto, x)
 
-main()
+def clear():
+	core.write('info', '')
+	core.write('videos', '')
 
-#search()
+main()
