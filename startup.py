@@ -5,14 +5,23 @@ import urllib.parse
 import re
 import sys
 
-i = 0
+globalInteger = 0
 
 def main():
-	data = create()
+	create()
+	data = core.read('info')
 	core.log('log', data)
 	data = core.split(data)
 
-	videos = search(data)
+	createPlaylist()
+	playlistUrls = core.read('playlistUrls')
+	core.log('log', playlistUrls)
+	playlistUrls = core.split(playlistUrls)
+
+	#playlist(playlistUrls)
+	search(data)
+
+	videos = core.read('playlistUrls')
 	core.log('log', videos)
 	videos = core.split(videos)
 
@@ -21,28 +30,46 @@ def main():
 	clear()
 
 def create():
-	global i
+	global globalInteger
 	location = 'Placeholder'
 
 	while len(location) > 0:
-		idct = input("dir>")
+		idct = input("Directory>")
 		if len(idct) > 0:
 			dct = idct
-		location = input("srh> ")
+		location = input("Keyword> ")
 		if len(location) > 0:
-			i = i + 1
+			globalInteger = globalInteger + 1
 			data ="{}\n{}".format(dct, location)
 			core.log('info', data)
 
 	data = core.read('info')
 	
-	return data
+	return
+
+def createPlaylist():
+	global globalInteger
+	playlistUrl = 'Placeholder'
+	while len(playlistUrl) > 0:
+		idct = input("Directory>")
+		if len(idct) > 0:
+			dct = idct
+		playlistUrl = input("Playlist Url> ")
+		if len(playlistUrl) > 0:
+			globalInteger = globalInteger + 1
+			playlistUrls ="{}\n{}".format(dct, playlistUrl)
+			core.log('playlistUrls', playlistUrls)
+			playlist(playlistUrl)
+
+	playlistUrls = core.read('playlistUrls')
+	
+	return
 
 
 
 def search(data):
-	global i
-	il = i
+	global globalInteger
+	il = globalInteger
 	ii = 1
 	while il > 0:
 		location = data[ii]
@@ -55,12 +82,29 @@ def search(data):
 
 	videos = core.read('videos')
 
-	return videos
+	return
+
+def playlist(playlistUrl):
+	print("****************" + playlistUrl)
+	#query_string = urllib.parse.urlencode({playlistUrls})
+	html_content = urllib.request.urlopen(playlistUrl)
+	#print("***************" + html_content.read().decode())
+	search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
+	#print("*****************" + ', '.join(search_results))
+
+	localInteger = len(search_results)
+	searchInteger = 0
+	while localInteger > 0:
+		core.log('videos', search_results[searchInteger])
+		localInteger = localInteger - 1
+		searchInteger = searchInteger + 1
+
+		return
 
 def download(data, videos):
-	global i
+	global globalInteger
 	string = 'cd {}' + '\n' + 'youtube-dl {}'
-	il = i
+	il = globalInteger
 	di = 0
 	vi = 1
 
